@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="question_one">Does Tennessee touch eight states?</string>
+    <string name="question_two">Does South Africa have two capitals?</string>
+    <string name="question_three">Is Denali the tallest mountain in North America?</string>
+    <string name="question_four">Is Canberra the capital of Australia?</string>
+    <string name="question_five">Is Maine the only state that touches one state?</string>
+</resources>
