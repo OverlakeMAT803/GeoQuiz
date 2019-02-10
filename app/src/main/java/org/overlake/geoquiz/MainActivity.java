@@ -1,6 +1,7 @@
 package org.overlake.geoquiz;
 
 import android.content.Intent;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -15,6 +16,8 @@ public class MainActivity extends AppCompatActivity {
 
     public static final String CURRENT_INDEX = "current_index";
     private static final String TAG = "MainActivity";
+    public static final int CHEAT_CODE = 1000;
+    public static final String ANSWER_IS_CORRECT = "answer_is_correct";
 
     private Button mTrueButton;
     private Button mFalseButton;
@@ -30,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
         new Question(R.string.question_four, true),
         new Question(R.string.question_five, true)
     };
+    private boolean mUserIsCheater;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,7 +52,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this,CheatActivity.class);
-                startActivity(intent);
+                boolean isAnswerTrue = mQuestionBank[mCurrentIndex].isAnswerTrue();
+                intent.putExtra(ANSWER_IS_CORRECT,isAnswerTrue);
+                startActivityForResult(intent, CHEAT_CODE);
             }
         });
 
@@ -81,17 +87,31 @@ public class MainActivity extends AppCompatActivity {
     private void updateQuestion(){
         int questionId = mQuestionBank[mCurrentIndex].getTextResId();
         mQuestionTextView.setText(questionId);
+        mUserIsCheater = false;
     }
 
     private void checkAnswer(boolean userClickedTrue){
-        boolean answerIsTrue = mQuestionBank[mCurrentIndex].isAnswerTrue();
+
         int messageResId = 0;
-        if(answerIsTrue == userClickedTrue){
-            messageResId = R.string.correct_toast;
+        if(mUserIsCheater){
+            messageResId = R.string.judgement_toast;
         } else {
-            messageResId = R.string.incorrect_toast;
+            boolean answerIsTrue = mQuestionBank[mCurrentIndex].isAnswerTrue();
+            if(answerIsTrue == userClickedTrue){
+                messageResId = R.string.correct_toast;
+            } else {
+                messageResId = R.string.incorrect_toast;
+            }
         }
+
         Toast.makeText(this, messageResId, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        if(resultCode == RESULT_OK && requestCode == CHEAT_CODE){
+            mUserIsCheater = true;
+        }
     }
 
     @Override
